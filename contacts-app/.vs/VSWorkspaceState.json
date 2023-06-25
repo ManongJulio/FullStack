@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\body",
+    "\\src\\components\\firebase",
+    "\\src\\components\\header",
+    "\\src\\components\\routes"
+  ],
+  "SelectedNode": "\\src\\components\\body\\create.js",
+  "PreviewInSolutionExplorer": false
+}

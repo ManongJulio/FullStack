@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ContactsAPI.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 namespace ContactsAPI
 {
@@ -26,8 +29,20 @@ namespace ContactsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
+            services.AddScoped<IContactsRepo, ContactsRepo>();
+            services.AddMemoryCache();
+            services.AddDbContext<DataContext>(options => {
+                var connectionString = Configuration.GetConnectionString("DefaultConnection");
+                options.UseSqlServer(connectionString)
+                .EnableDetailedErrors();
+                });
+            services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            var GraphQLService = services.AddGraphQLServer().AddQueryType<ContactsRepo>()
+                .AddFiltering()
+                .AddSorting().
+                AddMutationType<ContactsRepo>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+               
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -43,6 +58,12 @@ namespace ContactsAPI
                     },
                 });
             });
+            services.AddCors(o => o.AddPolicy("DevCors",builder => {
+                builder.AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin();
+            }));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,8 +72,9 @@ namespace ContactsAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
+                app.UseCors("DevCors");
 
+            }
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
@@ -66,14 +88,13 @@ namespace ContactsAPI
             });
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
+            app.UseCors();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGraphQL("/graphql");
             });
         }
     }

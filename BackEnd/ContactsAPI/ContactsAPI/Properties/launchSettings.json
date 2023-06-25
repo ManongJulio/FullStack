@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:49240",
+      "applicationUrl": "http://localhost:5000",
       "sslPort": 44305
     }
   },
@@ -18,8 +18,8 @@
     },
     "ContactsAPI": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchBrowser": false,
+      "launchUrl": "api/controller",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
