@@ -1,9 +1,11 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\BackEnd",
-    "\\BackEnd\\ContactsAPI"
+    "\\BackEnd\\ContactsAPI\\ContactsAPI",
+    "\\contacts-app",
+    "\\contacts-app\\src\\components",
+    "\\contacts-app\\src\\components\\body",
+    "\\contacts-app\\src\\components\\firebase",
+    "\\contacts-app\\src\\components\\header"
   ],
-  "SelectedNode": "\\BackEnd\\ContactsAPI\\ContactsAPI.sln",
   "PreviewInSolutionExplorer": false
 }
